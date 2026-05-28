@@ -6,41 +6,33 @@ use App\Http\Controllers\Api\Blog\BaseController;
 use App\Models\BlogCategory;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use App\Http\Requests\BlogCategoryUpdateRequest;
 
 class CategoryController extends BaseController
 {
-    /**
-     * Отримання списку категорій з пагінацією.
-     */
     public function index()
     {
-        // Внутрішній процес: Eloquent виконує SQL-запит з операторами LIMIT та OFFSET.
-        // Одночасно запускається другий запит COUNT(*), щоб вирахувати загальну кількість сторінок.
         $paginator = BlogCategory::paginate(5);
 
-        return $paginator; // Автоматично серіалізується в JSON-структуру з метаданими пагінації
+        return $paginator;
     }
 
-    /**
-     * Створення нової категорії (Реалізація завдання).
-     */
     public function store(Request $request)
     {
-        $data = $request->all();
-
-        // Якщо користувач не передав кастомний URL-слаг, генеруємо його автоматично з title
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
-
-        // Внутрішній процес: Створення об'єкта, фільтрація через $fillable та виконання SQL INSERT
-        $item = BlogCategory::create($data);
+        $item = new BlogCategory();
+        $item->title = $request->input('title');
+        $item->slug = $request->filled('slug')
+            ? $request->input('slug')
+            : Str::slug($request->input('title'));
+        $item->parent_id = $request->input('parent_id');
+        $item->description = $request->input('description');
+        $item->save();
 
         if ($item) {
             return [
                 'success' => true,
                 'message' => 'Успішно створено',
-                'id' => $item->id // Повертаємо ID створеного запису для фронтенду
+                'id' => $item->id
             ];
         } else {
             return [
@@ -50,10 +42,7 @@ class CategoryController extends BaseController
         }
     }
 
-    /**
-     * Оновлення існуючої категорії.
-     */
-    public function update(Request $request, string $id)
+    public function update(BlogCategoryUpdateRequest $request, $id)
     {
         $item = BlogCategory::find($id);
         
@@ -61,13 +50,14 @@ class CategoryController extends BaseController
             return ['message' => "Запис id=[{$id}] не знайдено"];
         }
 
-        $data = $request->all();
-        
-        if (empty($data['slug'])) {
-            $data['slug'] = Str::slug($data['title']);
-        }
+        $item->title = $request->input('title');
+        $item->slug = $request->filled('slug')
+            ? $request->input('slug')
+            : Str::slug($request->input('title'));
+        $item->parent_id = $request->input('parent_id');
+        $item->description = $request->input('description');
 
-        $result = $item->update($data);
+        $result = $item->save();
 
         if ($result) {
             return [

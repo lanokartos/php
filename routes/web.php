@@ -2,6 +2,8 @@
 
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\RestTestController;
+use App\Http\Controllers\DiggingDeeperController;
+
 
 Route::get('/', function () {
     return view('welcome');
@@ -15,6 +17,10 @@ Route::middleware([
     Route::get('/dashboard', function () {
         return view('dashboard');
     })->name('dashboard');
+});
+
+Route::prefix('digging_deeper')->name('digging_deeper.')->group(function () {
+    Route::get('collections', [DiggingDeeperController::class, 'collections'])->name('collections');
 });
 
 Route::get('rest', [RestTestController::class, 'index'])->name('restTest.index');

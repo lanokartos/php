@@ -13,7 +13,12 @@ return new class extends Migration
     {
         Schema::create('blog_categories', function (Blueprint $table) {
             $table->id();
-            $table->timestamps();
+            $table->bigInteger('parent_id')->unsigned()->default(1); // для вкладених категорій
+            $table->string('slug')->unique(); // унікальний URL-текст (наприклад: "my-first-category")
+            $table->string('title'); // назва
+            $table->text('description')->nullable(); // опис, може бути порожнім
+            $table->timestamps(); // автоматично створює колонки created_at та updated_at
+            $table->softDeletes(); // колонка deleted_at для "м'якого" видалення (без видалення з фізичного диску)
         });
     }
 

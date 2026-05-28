@@ -13,7 +13,24 @@ return new class extends Migration
     {
         Schema::create('blog_posts', function (Blueprint $table) {
             $table->id();
+            $table->bigInteger('category_id')->unsigned();
+            $table->bigInteger('user_id')->unsigned();
+            $table->string('slug')->unique();
+            $table->string('title');
+            $table->text('excerpt')->nullable();
+            $table->text('content_raw');
+            $table->text('content_html');
+            $table->boolean('is_published')->default(false);
+            $table->timestamp('published_at')->nullable();
             $table->timestamps();
+            $table->softDeletes();
+
+            // Створення архітектурних зв'язків між таблицями (Foreign Keys):
+            $table->foreign('user_id')->references('id')->on('users'); // пост належить користувачу
+            $table->foreign('category_id')->references('id')->on('blog_categories'); // пост належить категорії
+            
+            // Індексація для швидкого пошуку в БД (прискорює запити типу "покажи лише опубліковані")
+            $table->index('is_published'); 
         });
     }
 

@@ -23,3 +23,8 @@ Route::prefix('admin/blog')->group(function () {
 Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
+
+//BlogPost
+Route::apiResource('posts', PostController::class)
+->except(['show'])                          //не робити маршрут для метода show
+->names('blog.admin.posts');

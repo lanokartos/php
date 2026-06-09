@@ -7,12 +7,18 @@ use App\Models\BlogCategory;
 use Illuminate\Support\Str;
 use App\Http\Requests\BlogCategoryUpdateRequest;
 use App\Http\Requests\BlogCategoryCreateRequest;
+use App\Repositories\BlogCategoryRepository;
 
 class CategoryController extends BaseController
 {
+    public function __construct(private BlogCategoryRepository $blogCategoryRepository)
+    {
+        //parent::__construct();
+    }
+
     public function index()
     {
-        $paginator = BlogCategory::paginate(5);
+        $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
 
         return $paginator;
     }
@@ -20,9 +26,6 @@ class CategoryController extends BaseController
     public function store(BlogCategoryCreateRequest $request)
     {
         $data = $request->input(); //отримаємо масив даних, які надійшли з форми
-        if (empty($data['slug'])) { //якщо псевдонім порожній
-            $data['slug'] = Str::slug($data['title']); //генеруємо псевдонім
-        }
  
         $item = (new BlogCategory())->create($data); //створюємо об'єкт і додаємо в БД
 
@@ -38,16 +41,14 @@ class CategoryController extends BaseController
 
     public function update(BlogCategoryUpdateRequest $request, $id)
     {
-        $item = BlogCategory::find($id);
+        $item = $this->blogCategoryRepository->getEdit($id);
         
         if (empty($item)) {
             return ['message' => "Запис id=[{$id}] не знайдено"];
         }
 
         $item->title = $request->input('title');
-        $item->slug = $request->filled('slug')
-            ? $request->input('slug')
-            : Str::slug($request->input('title'));
+        $item->slug = $request->input('slug');
         $item->parent_id = $request->input('parent_id');
         $item->description = $request->input('description');
 

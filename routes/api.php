@@ -24,7 +24,16 @@ Route::get('/user', function (Request $request) {
     return $request->user();
 })->middleware('auth:sanctum');
 
+use App\Http\Controllers\DiggingDeeperController;
+
 //BlogPost
 Route::apiResource('posts', PostController::class)
 ->except(['show'])                          //не робити маршрут для метода show
 ->names('blog.admin.posts');
+
+Route::get('process-video', [DiggingDeeperController::class, 'processVideo'])
+    ->name('digging_deeper.processVideo');
+    
+Route::get('prepare-catalog', [DiggingDeeperController::class, 'prepareCatalog'])
+    ->name('digging_deeper.prepareCatalog'); 
+

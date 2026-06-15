@@ -16,7 +16,6 @@ Route::prefix('admin/blog')->name('admin.blog.')->group(function () {
 
 Route::prefix('admin/blog')->group(function () {
     Route::apiResource('posts', PostController::class)
-        ->except(['show'])
         ->names('blog.admin.posts');
 });
 
@@ -28,7 +27,6 @@ use App\Http\Controllers\DiggingDeeperController;
 
 //BlogPost
 Route::apiResource('posts', PostController::class)
-->except(['show'])                          //не робити маршрут для метода show
 ->names('blog.admin.posts');
 
 Route::get('process-video', [DiggingDeeperController::class, 'processVideo'])

@@ -50,7 +50,9 @@
               </td>
               <td class="px-6 py-4 text-center align-middle">
                 <div class="flex justify-center">
-                  <UIcon name="i-lucide-zoom-in" class="w-5 h-5 text-gray-400" />
+                  <NuxtLink :to="`/posts/${row.id}`" class="text-gray-400 hover:text-gray-600 transition-colors">
+                    <UIcon name="i-lucide-zoom-in" class="w-5 h-5" />
+                  </NuxtLink>
                 </div>
               </td>
               <td class="px-4 py-4 text-center align-middle text-[13px] text-gray-600">

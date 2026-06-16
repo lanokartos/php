@@ -12,6 +12,7 @@ use App\Http\Requests\BlogPostCreateRequest;
 use App\Jobs\BlogPostAfterCreateJob;
 use App\Jobs\BlogPostAfterDeleteJob;
 use DispatchesJobs;
+use App\Http\Resources\Api\Blog\Admin\PostResource;
 
 class PostController extends BaseController
 {
@@ -25,9 +26,11 @@ class PostController extends BaseController
      */
     public function index()
     {
+        // Отримуємо пагіновані дані з репозиторія
         $paginator = $this->blogPostRepository->getAllWithPaginate();
 
-        return $paginator;
+        // Обгортаємо пагінацію в API Ресурс
+        return PostResource::collection($paginator);
     }
 
     /**
@@ -40,8 +43,7 @@ class PostController extends BaseController
         $item = (new BlogPost())->create($data); //створюємо об'єкт і додаємо в БД
 
         if ($item) {
-            $job = new BlogPostAfterCreateJob($item);
-            $this->dispatch($job);
+            BlogPostAfterCreateJob::dispatch($item);
             return ['success' => 'Успішно збережено'];
         } else {
             return ['msg' => 'Помилка збереження'];

@@ -8,6 +8,7 @@ use Illuminate\Support\Str;
 use App\Http\Requests\BlogCategoryUpdateRequest;
 use App\Http\Requests\BlogCategoryCreateRequest;
 use App\Repositories\BlogCategoryRepository;
+use App\Http\Resources\Api\Blog\Admin\CategoryResource;
 
 class CategoryController extends BaseController
 {
@@ -16,11 +17,15 @@ class CategoryController extends BaseController
         //parent::__construct();
     }
 
-    public function index()
+    public function index(\Illuminate\Http\Request $request)
     {
+        if ($request->query('all')) {
+            return $this->blogCategoryRepository->startConditions()->get();
+        }
+
         $paginator = $this->blogCategoryRepository->getAllWithPaginate(5);
 
-        return $paginator;
+        return CategoryResource::collection($paginator);
     }
 
     public function store(BlogCategoryCreateRequest $request)
@@ -61,6 +66,28 @@ class CategoryController extends BaseController
             ];
         } else {
             return ['message' => 'Помилка збереження'];
+        }
+    }
+
+    public function show($id)
+    {
+        $item = $this->blogCategoryRepository->getEdit($id);
+
+        if (empty($item)) {
+            return response()->json(['message' => "Запис id=[{$id}] не знайдено"], 404);
+        }
+
+        return $item;
+    }
+
+    public function destroy($id)
+    {
+        $result = BlogCategory::destroy($id);
+
+        if ($result) {
+            return ['success' => true];
+        } else {
+            return response()->json(['message' => 'Помилка видалення'], 500);
         }
     }
 }

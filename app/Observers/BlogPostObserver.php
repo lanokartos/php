@@ -51,9 +51,7 @@ class BlogPostObserver
      */
     protected function setUser(BlogPost $blogPost)
     {
-        
-        $blogPost->user_id = auth()->id() ?? BlogPost::UNKNOWN_USER;
-        
+        $blogPost->user_id = auth()->id() ?? \App\Models\User::first()?->id ?? BlogPost::UNKNOWN_USER;
     }
     
     public function updating(BlogPost $blogPost)

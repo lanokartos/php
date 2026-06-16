@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-[#f8f9fa] py-12 px-4 sm:px-6 lg:px-8 font-sans text-gray-900">
+  <div class="min-h-screen bg-white py-12 px-4 sm:px-6 lg:px-8 font-sans text-black">
     <div class="max-w-3xl mx-auto">
       <div v-if="pending" class="flex flex-col items-center justify-center py-20 bg-white rounded-xl border border-gray-200 shadow-sm">
         <UIcon name="i-lucide-loader-2" class="w-8 h-8 text-gray-400 animate-spin mb-4" />
@@ -41,9 +41,9 @@
 
         <hr class="border-gray-100 my-8" />
 
-        <div class="prose prose-gray max-w-none">
-          <div v-if="post.content_html" v-html="post.content_html"></div>
-          <div v-else class="whitespace-pre-line text-gray-700 leading-relaxed">
+        <div class="prose prose-gray max-w-none text-black">
+          <div v-if="post.content_html" v-html="post.content_html" class="text-black"></div>
+          <div v-else class="whitespace-pre-line text-black leading-relaxed">
             {{ post.content_raw }}
           </div>
         </div>
